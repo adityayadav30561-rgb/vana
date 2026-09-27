@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Vana — Where ideas find their way</title>
+    <meta name="description" content="Vana is an independent digital studio for SEO, websites, Android and iOS apps, and custom software." />
+    <meta name="theme-color" content="#12281c" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 31C15 20 13 10 16 2c3 8 1 18 0 29z' fill='%236f9a3a'/%3E%3Cellipse cx='16' cy='9' rx='5' ry='6.5' fill='%232aa38a'/%3E%3Cellipse cx='16' cy='9.4' rx='2.6' ry='3.6' fill='%23143f93'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="is-loading">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="feather-mark" viewBox="0 0 32 32">
+        <path d="M16 31.2c-.6-7-2.4-14.8-.2-24.6.1-.5.5-.5.6 0 2.2 9.8.4 17.6-.4 24.6" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+        <path d="M16 23c-2.6-1.7-5-4.5-6-8.5M16 23c2.6-1.7 5-4.5 6-8.5M16 18.5c-3.6-2-6.4-5.8-6.6-10.2M16 18.5c3.6-2 6.4-5.8 6.6-10.2" fill="none" stroke="currentColor" stroke-width=".7" stroke-linecap="round" opacity=".55" />
+        <ellipse cx="16" cy="9.6" rx="4.4" ry="5.6" fill="none" stroke="currentColor" stroke-width="1" />
+        <ellipse cx="16" cy="10" rx="2" ry="2.8" fill="currentColor" />
+      </symbol>
+      <symbol id="arrow-out" viewBox="0 0 24 24"><path d="M8 16 16 8M9.5 8H16v6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></symbol>
+      <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></symbol>
+    </svg>
+
+    <div class="loader" id="loader" role="status" aria-live="polite">
+      <div class="loader__inner">
+        <!-- the feather draws itself as the forest loads -->
+        <svg class="intro-feather" id="introFeather" viewBox="0 0 60 124" aria-hidden="true">
+          <path class="q" pathLength="1" d="M30 120 C 29.4 96, 28.8 64, 30.2 24" />
+          <path class="b" pathLength="1" d="M29.8 104 C 25 99, 20 93, 15 86 M29.9 104 C 35 99, 40 93, 45 86" />
+          <path class="b" pathLength="1" d="M29.6 90 C 23 84, 17 76, 13 66 M29.8 90 C 37 84, 43 76, 47 66" />
+          <path class="b" pathLength="1" d="M29.5 76 C 22 69, 16 59, 14 49 M29.7 76 C 38 69, 44 59, 46 49" />
+          <path class="e" pathLength="1" d="M30 8 C 42 8, 45 22, 45 31 C 45 42, 38 51, 30 53 C 22 51, 15 42, 15 31 C 15 22, 18 8, 30 8 Z" />
+          <path class="e" pathLength="1" d="M30 16 C 38 16, 39.5 26, 39.5 31.5 C 39.5 39, 35 45, 30 46 C 25 45, 20.5 39, 20.5 31.5 C 20.5 26, 22 16, 30 16 Z" />
+          <path class="h" d="M30 23.5 C 34.5 23.5, 35 29, 35 32 C 35 36.5, 32.5 40, 30 40 C 27.5 40, 25 36.5, 25 32 C 25 29, 25.5 23.5, 30 23.5 Z" />
+        </svg>
+        <p class="loader__word">Vana</p>
+        <p class="loader__hint">Entering the forest</p>
+      </div>
+    </div>
+
+    <canvas id="world" class="world" aria-hidden="true"></canvas>
+    <div class="world-fallback" aria-hidden="true"></div>
+    <div class="atmos" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true"><span class="cursor__ring"></span><span class="cursor__dot"></span></div>
+
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav" id="nav">
+      <div class="nav__inner">
+        <a class="brand" href="#home" aria-label="Vana — home">
+          <svg class="brand__mark" aria-hidden="true"><use href="#feather-mark" /></svg>
+          <span class="brand__word">Vana</span>
+        </a>
+        <nav class="nav__links" aria-label="Primary">
+          <a href="#home">Home</a>
+          <a href="#about">About</a>
+          <a href="#experience">Experience</a>
+          <a href="#services">Services</a>
+          <a href="#work">Work</a>
+          <a href="#journey">Journey</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <button class="sound" id="soundToggle" type="button" aria-pressed="false" aria-label="Play music" hidden>
+          <span class="sound__bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="sound__label">Sound off</span>
+        </button>
+        <a class="nav__cta" href="#contact" data-magnetic><span>Start a project</span></a>
+        <button class="nav__toggle" id="menuToggle" aria-expanded="false" aria-controls="menu">
+          <span class="nav__toggle-label">Menu</span><span class="nav__toggle-lines" aria-hidden="true"><i></i><i></i></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu" id="menu" hidden>
+      <nav class="menu__links" aria-label="Mobile">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#services">Services</a>
+        <a href="#work">Work</a>
+        <a href="#journey">Journey</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <p class="menu__foot"><a href="mailto:hello@vana.studio">hello@vana.studio</a></p>
+    </div>
+
+    <aside class="altimeter" aria-hidden="true">
+      <span class="altimeter__alt" id="altValue">112 m</span>
+      <span class="altimeter__track"><i id="altFill"></i></span>
+      <span class="altimeter__zone" id="altZone">The sky</span>
+    </aside>
+
+    <main id="main">
+      <!-- HERO ------------------------------------------------------------ -->
+      <section class="hero" id="home" aria-labelledby="hero-title">
+        <span class="feather-anchor fa-hero" data-feather data-fy="0.3" data-fd="28"></span>
+        <div class="container hero__inner">
+          <h1 class="hero__title display" id="hero-title" data-split>Where ideas <em>find</em> their way.</h1>
+          <div class="hero__foot">
+            <p class="hero__lead reveal">Search that grows, websites and apps built with purpose, and custom solutions shaped around your business.</p>
+            <div class="hero__ctas reveal">
+              <a class="btn btn--solid" href="#work" data-magnetic><span>Explore our work</span></a>
+              <a class="btn btn--ghost" href="#experience" data-magnetic><span>Begin the journey</span><svg aria-hidden="true"><use href="#arrow" /></svg></a>
+            </div>
+          </div>
+        </div>
+        <a class="scroll-cue" href="#experience" id="scrollCue"><span>Scroll to begin</span><i aria-hidden="true"></i></a>
+      </section>
+
+      <!-- THE FOREST ------------------------------------------------------ -->
+      <section class="section forest" id="experience" aria-labelledby="forest-title">
+        <div class="container forest__grid">
+          <div class="forest__text scrim">
+            <h2 class="display h2" id="forest-title" data-split>Every journey begins with a step.</h2>
+            <p class="lead reveal">Every brand we meet begins somewhere quiet — a hunch, a founder's conviction, a problem nobody has named yet. We begin by listening, and let the work find its direction.</p>
+            <p class="reveal">No templates, no formulas. Each engagement starts with a few unhurried weeks inside your world — your customers, your competitors, your ambitions — until the path ahead is obvious.</p>
+            <a class="link-arrow reveal" href="#about">How we think <svg aria-hidden="true"><use href="#arrow" /></svg></a>
+          </div>
+          <figure class="frame reveal" aria-hidden="true">
+            <span class="frame__c frame__c--tl"></span><span class="frame__c frame__c--tr"></span><span class="frame__c frame__c--bl"></span><span class="frame__c frame__c--br"></span>
+            <span class="feather-anchor fa-frame" data-feather data-fy="0.5" data-fd="30"></span>
+            <figcaption>Through the canopy — 06:42</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ABOUT ----------------------------------------------------------- -->
+      <section class="section about" id="about" aria-labelledby="about-title">
+        <div class="container about__grid">
+          <div class="about__text scrim">
+            <h2 class="display h2" id="about-title" data-split>Purpose behind every detail.</h2>
+            <p class="lead reveal">Vana is an independent studio for search, web and mobile. Our name is the Sanskrit word for <em>forest</em> — a reminder that lasting growth comes slowly, from deep roots, toward the light.</p>
+            <p class="reveal">We are a small team of SEO specialists, designers and engineers who prefer depth to noise. We partner with founders and teams who care how things feel as much as how they perform, and we stay with them long after launch.</p>
+          </div>
+          <aside class="glass about__panel reveal">
+            <span class="feather-anchor fa-about" data-feather data-fy="0.4" data-fd="27"></span>
+            <p class="eyebrow">Our philosophy</p>
+            <ol class="principles">
+              <li><span class="principles__n">i.</span><div><h3>Clarity before craft</h3><p>We find the one true thing a brand should say, then design everything around it.</p></div></li>
+              <li><span class="principles__n">ii.</span><div><h3>Nothing ornamental</h3><p>Every detail has to earn its place. Restraint is a design decision.</p></div></li>
+              <li><span class="principles__n">iii.</span><div><h3>Built to grow</h3><p>Systems, not one-offs — work that stays alive as your company changes.</p></div></li>
+            </ol>
+            <dl class="facts">
+              <div><dt>Founded</dt><dd>2014</dd></div>
+              <div><dt>Projects</dt><dd>140+</dd></div>
+              <div><dt>Countries</dt><dd>11</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <!-- SERVICES -------------------------------------------------------- -->
+      <section class="section services" id="services" aria-labelledby="services-title">
+        <div class="container">
+          <header class="section-head">
+            <div class="scrim">
+              <h2 class="display h2" id="services-title" data-split>What we create</h2>
+            </div>
+            <p class="section-head__aside scrim reveal">Four disciplines, one team. Most partnerships draw on several: a site that ranks, the app beside it, and the custom tools that tie them together.</p>
+            <span class="feather-anchor fa-services" data-feather data-fy="0.3" data-fd="27"></span>
+          </header>
+          <div class="cards">
+            <article class="card" data-tilt>
+              <span class="card__sheen" aria-hidden="true"></span>
+              <span class="card__motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <div class="card__top">
+                <svg class="card__icon" viewBox="0 0 48 48" aria-hidden="true"><circle cx="21" cy="21" r="13" /><path d="M30.5 30.5 41 41" /><path d="M14 25l4.5-4.5 3.5 3 6-6.5" opacity=".45" /><circle cx="28" cy="17" r="2.2" class="fill" /></svg>
+              </div>
+              <h3>SEO</h3>
+              <p>Technical, content and authority work that earns lasting rankings, and a place in Google’s AI answers too.</p>
+              <ul class="card__tags"><li>Technical SEO</li><li>Content</li><li>AI search</li></ul>
+            </article>
+            <article class="card" data-tilt>
+              <span class="card__sheen" aria-hidden="true"></span>
+              <span class="card__motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <div class="card__top">
+                <svg class="card__icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="10" width="34" height="26" rx="3" /><path d="M7 16h34" opacity=".45" /><path d="M16 42h16M24 36v6" /><circle cx="11" cy="13" r="1" class="fill" /><path d="M14 30c4-6 7-9 10-6s6 1 10-5" /></svg>
+              </div>
+              <h3>Websites</h3>
+              <p>Fast, considered websites and online stores, built to rank and convert from the day they launch.</p>
+              <ul class="card__tags"><li>Design</li><li>Development</li><li>E-commerce</li></ul>
+            </article>
+            <article class="card" data-tilt>
+              <span class="card__sheen" aria-hidden="true"></span>
+              <span class="card__motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <div class="card__top">
+                <svg class="card__icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="5" width="20" height="38" rx="4" /><path d="M21 9h6" opacity=".45" /><path d="M19 17h10M19 22h10M19 27h6" opacity=".45" /><circle cx="24" cy="37.5" r="1.8" class="fill" /></svg>
+              </div>
+              <h3>Android &amp; iOS apps</h3>
+              <p>Native-quality mobile apps for Android and iOS, designed with the same care as everything else we make.</p>
+              <ul class="card__tags"><li>Android</li><li>iOS</li><li>Cross-platform</li></ul>
+            </article>
+            <article class="card" data-tilt>
+              <span class="card__sheen" aria-hidden="true"></span>
+              <span class="card__motes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+              <div class="card__top">
+                <svg class="card__icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M17 14 7 24l10 10M31 14l10 10-10 10" /><path d="M27 9 21 39" opacity=".45" /><circle cx="24" cy="24" r="2.2" class="fill" /></svg>
+              </div>
+              <h3>Custom solutions</h3>
+              <p>Dashboards, integrations and bespoke software, shaped around the way your business actually works.</p>
+              <ul class="card__tags"><li>Web apps</li><li>Integrations</li><li>Automation</li></ul>
+            </article>
+            <a class="card card--cta" href="#contact" data-tilt>
+              <span class="card__sheen" aria-hidden="true"></span>
+              <h3>Not sure where to begin?</h3>
+              <p>Most projects start with a conversation. Tell us where you are, and we'll help you find the first step.</p>
+              <span class="link-arrow">Start a conversation <svg aria-hidden="true"><use href="#arrow" /></svg></span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORK ------------------------------------------------------------ -->
+      <section class="section work" id="work" aria-labelledby="work-title">
+        <div class="container">
+          <header class="section-head">
+            <div class="scrim">
+              <h2 class="display h2" id="work-title" data-split>Work that takes root.</h2>
+            </div>
+            <span class="feather-anchor fa-p1" data-feather data-fy="0.34" data-fd="27"></span>
+            <p class="section-head__aside scrim reveal">Real results for real brands, by discipline. Every SEO figure comes straight from our clients’ own Google Analytics and Search Console. Open any project to see the screenshots.</p>
+          </header>
+
+          <!-- @work-showcase -->
+          <span class="feather-anchor fa-work" data-feather data-fy="0.45" data-fd="31"></span>
+        </div>
+      </section>
+
+      <!-- JOURNEY --------------------------------------------------------- -->
+      <section class="section journey" id="journey" aria-labelledby="journey-title">
+        <div class="container">
+          <header class="section-head section-head--center scrim">
+            <h2 class="display h2" id="journey-title" data-split>The journey</h2>
+            <p class="reveal">Four stages, walked together. Follow the feather.</p>
+          </header>
+        </div>
+        <div class="container journey__track" id="journeyTrack">
+          <svg class="journey__path" id="journeyPath" aria-hidden="true"><path class="journey__base" /><path class="journey__line" /></svg>
+          <ol class="stages">
+            <li class="stage">
+              <span class="stage__node feather-anchor" data-feather data-fy="0.5" data-fd="19"></span>
+              <div class="stage__body">
+                <h3>Discover</h3>
+                <p>We immerse ourselves in your world — interviews, audits, field visits — until we understand what makes you worth choosing.</p>
+                <ul class="stage__list"><li>SEO &amp; site audit</li><li>Keyword research</li><li>Competitor landscape</li></ul>
+              </div>
+            </li>
+            <li class="stage">
+              <span class="stage__node feather-anchor" data-feather data-fy="0.5" data-fd="19"></span>
+              <div class="stage__body">
+                <h3>Define</h3>
+                <p>We distil what we've learned into a clear plan: the searches worth winning, the product worth building, and how it all fits together.</p>
+                <ul class="stage__list"><li>Search strategy</li><li>Site architecture</li><li>Product roadmap</li></ul>
+              </div>
+            </li>
+            <li class="stage">
+              <span class="stage__node feather-anchor" data-feather data-fy="0.5" data-fd="19"></span>
+              <div class="stage__body">
+                <h3>Create</h3>
+                <p>Websites, apps and content take shape together, crafted in close collaboration and tested with real people.</p>
+                <ul class="stage__list"><li>Websites &amp; apps</li><li>Custom software</li><li>SEO content</li></ul>
+              </div>
+            </li>
+            <li class="stage">
+              <span class="stage__node feather-anchor" data-feather data-fy="0.5" data-fd="19"></span>
+              <div class="stage__body">
+                <h3>Grow</h3>
+                <p>Launch is the beginning. We measure, learn and refine alongside your team so the work keeps compounding.</p>
+                <ul class="stage__list"><li>Performance &amp; analytics</li><li>Experimentation</li><li>Ongoing partnership</li></ul>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- RESULTS --------------------------------------------------------- -->
+      <section class="section results" id="results" aria-labelledby="results-title">
+        <div class="container">
+          <header class="section-head section-head--center scrim">
+            <span class="feather-anchor fa-results" data-feather data-fy="0.2" data-fd="23"></span>
+            <h2 class="display h2" id="results-title" data-split>Beautiful work should move people.</h2>
+            <p class="reveal">And it should move the numbers too. A few outcomes from this year, straight from our clients’ dashboards.</p>
+          </header>
+          <div class="metrics">
+            <div class="metric reveal">
+              <p class="metric__value"><span data-count="7245" data-prefix="+" data-suffix="%">+7,245%</span></p>
+              <p class="metric__label">Active users</p>
+              <p class="metric__note">Badowl, Feb – Sep 2026, on the previous period</p>
+            </div>
+            <div class="metric reveal">
+              <p class="metric__value"><span data-count="1.19" data-decimals="2" data-suffix="M">1.19M</span></p>
+              <p class="metric__label">Search impressions</p>
+              <p class="metric__note">Khadi Organique, last six months</p>
+            </div>
+            <div class="metric reveal">
+              <p class="metric__value"><span data-count="6537" data-prefix="+" data-suffix="%">+6,537%</span></p>
+              <p class="metric__label">Purchases</p>
+              <p class="metric__note">Badowl, Feb – Sep 2026, on the previous period</p>
+            </div>
+            <div class="metric reveal">
+              <p class="metric__value"><span data-count="100" data-suffix="K+">100K+</span></p>
+              <p class="metric__label">AI search impressions</p>
+              <p class="metric__note">Across our five SEO clients, in Google’s AI features</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TESTIMONIAL ----------------------------------------------------- -->
+      <section class="section testimonial" id="testimonial" aria-label="Testimonial">
+        <figure class="container quote scrim">
+          <span class="feather-anchor fa-quote" data-feather data-fy="0.26" data-fd="22"></span>
+          <svg class="quote__mark" viewBox="0 0 48 36" aria-hidden="true"><path d="M0 36V22C0 9 7 2 19 0l2 5c-7 2-10 6-10 12h9v19zm27 0V22C27 9 34 2 46 0l2 5c-7 2-10 6-10 12h9v19z" /></svg>
+          <blockquote class="reveal"><p>They understood the vision before they touched the design.</p></blockquote>
+          <figcaption class="reveal">
+            <span class="quote__avatar" aria-hidden="true">MR</span>
+            <span><strong>Meera Raghavan</strong><span>Founder &amp; CEO, Saffron &amp; Co.</span></span>
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- FINAL DESTINATION ----------------------------------------------- -->
+      <section class="final" id="contact" aria-labelledby="final-title">
+        <p class="sr-only">Illustration: Krishna sits peacefully beneath an ancient tree in a sunlit forest, eyes closed, holding his flute. The peacock feather that guided the page has come to rest in the grass nearby.</p>
+        <img class="final__fallback" src="./assets/krishna.webp" alt="" width="415" height="683" loading="lazy" />
+        <div class="container final__inner scrim">
+          <h2 class="display h2 final__title" id="final-title" data-split>Some journeys are worth beginning.</h2>
+          <p class="lead reveal">Let's create something meaningful together.</p>
+          <div class="final__ctas reveal">
+            <a class="btn btn--solid" href="mailto:hello@vana.studio?subject=A%20new%20project" data-magnetic><span>Start a project</span></a>
+            <a class="btn btn--ghost" href="#work" data-magnetic><span>View our work</span><svg aria-hidden="true"><use href="#arrow" /></svg></a>
+          </div>
+        </div>
+        <span class="feather-anchor fa-land" data-feather data-land></span>
+        <footer class="footer container">
+          <span>© 2026 Vana Studio</span>
+          <a href="mailto:hello@vana.studio">hello@vana.studio</a>
+          <span class="footer__place">Bengaluru · Working worldwide</span>
+          <nav class="footer__social" aria-label="Social"><a href="#" rel="noopener">Instagram</a><a href="#" rel="noopener">LinkedIn</a><a href="#" rel="noopener">Behance</a></nav>
+        </footer>
+      </section>
+    </main>
+
+    <dialog class="lightbox" id="lightbox" aria-labelledby="lbTitle">
+      <div class="lightbox__panel">
+        <header class="lightbox__head">
+          <div class="lightbox__heading">
+            <p class="project__meta" id="lbMeta"></p>
+            <h3 class="lightbox__title" id="lbTitle"></h3>
+          </div>
+          <a class="case__site" id="lbSite" href="#" target="_blank" rel="noopener"><span></span><svg aria-hidden="true"><use href="#arrow-out" /></svg></a>
+          <button class="lightbox__close" id="lbClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
+        </header>
+        <div class="lightbox__stage">
+          <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Previous screenshot"><svg aria-hidden="true"><use href="#arrow" /></svg></button>
+          <figure class="lightbox__figure">
+            <img id="lbImg" alt="" />
+            <figcaption id="lbCap"></figcaption>
+          </figure>
+          <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Next screenshot"><svg aria-hidden="true"><use href="#arrow" /></svg></button>
+        </div>
+        <div class="lightbox__foot"><p class="lightbox__count" id="lbCount" aria-live="polite"></p><div class="lightbox__thumbs" id="lbThumbs"></div></div>
+      </div>
+    </dialog>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+# dependencies and build output
+node_modules/
+dist/
+
+# generated from src/content/projects.js on every dev start and build
+/work/
+
+# local tooling
+.claude/
+*.log
+.DS_Store
+Thumbs.db
