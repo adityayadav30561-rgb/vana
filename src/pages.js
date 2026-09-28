@@ -5,7 +5,7 @@
 
 import { initMusic } from './music.js';
 import { initWork } from './work.js';
-import { splitWords, prepareCounters, countUp, magnetic } from './ui.js';
+import { splitWords, prepareCounters, countUp, magnetic, steadyHeight } from './ui.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -64,13 +64,15 @@ const body = document.body;
 
 function onScroll() {
   const y = scrollY;
-  const max = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  // the steady height, so a phone's address bar sliding in and out doesn't jolt anything
+  const vhSteady = steadyHeight();
+  const max = Math.max(1, document.documentElement.scrollHeight - vhSteady);
   nav.classList.toggle('is-scrolled', y > 30);
   // light at the top; toward the foot of the page it drifts into dusk
   body.style.setProperty('--night', (Math.pow(clamp((y / max - 0.3) / 0.7, 0, 1), 1.3) * 0.85).toFixed(3));
   if (reduced) return;
   // the still drifts across the page's length, but never past the 6% it overhangs the window
-  far.style.transform = `translate3d(0, ${((0.5 - y / max) * innerHeight * 0.1).toFixed(1)}px, 0)`;
+  far.style.transform = `translate3d(0, ${((0.5 - y / max) * vhSteady * 0.1).toFixed(1)}px, 0)`;
   nearL.style.transform = `translate3d(0, ${(y * -0.42).toFixed(1)}px, 0)`;
   nearR.style.transform = `translate3d(0, ${(y * -0.3).toFixed(1)}px, 0)`;
 }
@@ -87,10 +89,10 @@ function initFeather() {
   if (!el) return;
   if (reduced) { el.remove(); return; }
   let points = [];
-  let vw = innerWidth, vh = innerHeight;
+  let vw = innerWidth, vh = steadyHeight();
 
   function measure() {
-    vw = innerWidth; vh = innerHeight;
+    vw = innerWidth; vh = steadyHeight();
     const max = document.documentElement.scrollHeight - vh;
     points = $$('[data-feather]').map((a) => {
       const r = a.getBoundingClientRect();
