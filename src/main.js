@@ -1,7 +1,7 @@
 import { initMusic } from './music.js';
 import { initWork } from './work.js';
 import { initShowcase } from './showcase.js';
-import { splitWords, prepareCounters, countUp, magnetic, steadyHeight } from './ui.js';
+import { splitWords, prepareCounters, countUp, magnetic } from './ui.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -44,8 +44,9 @@ $$('.reveal, [data-split]').forEach((el) => {
 // -------------------------------------------------------------- reveals ---
 
 const heroEls = $$('.hero .reveal, .hero [data-split]');
-// section headlines (their lines also drift apart with depth, see frame())
+// section headlines wait for the feather: they appear as it drifts past them
 const cueHeadlines = $$('main section:not(.hero) h2[data-split]');
+const pendingHeadlines = new Set(cueHeadlines);
 const io = new IntersectionObserver(
   (entries) => {
     for (const e of entries) {
@@ -57,7 +58,7 @@ const io = new IntersectionObserver(
   },
   { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
 );
-$$('.reveal, [data-split], .slide .figure').forEach((el) => { if (!heroEls.includes(el)) io.observe(el); });
+$$('.reveal, [data-split], .slide .figure').forEach((el) => { if (!heroEls.includes(el) && !cueHeadlines.includes(el)) io.observe(el); });
 
 // ------------------------------------------------------------- count-up ---
 
@@ -145,9 +146,7 @@ const parallaxEls = $$('[data-parallax]');
 
 function measure() {
   vw = innerWidth;
-  // laid out against the steady height: a phone's address bar sliding in and out
-  // mustn't move the camera, the feather or the anchors mid-scroll
-  vh = steadyHeight();
+  vh = innerHeight;
   maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
   const sy = scrollY;
   anchors = $$('[data-feather]')
@@ -301,6 +300,15 @@ function frame(now) {
     const off = (r.top + r.height / 2 - vh / 2) * parseFloat(el.dataset.parallax);
     el.style.transform = `translate3d(0, ${(-off).toFixed(1)}px, 0)`;
   });
+
+  // headlines in view reveal when the feather reaches their height (or as a
+  // fallback once they're well up the screen)
+  for (const h of pendingHeadlines) {
+    const r = h.getBoundingClientRect();
+    if (r.top > vh || r.bottom < 0) continue;
+    const featherY = world ? springs.fy.x * vh : vh * 0.5;
+    if (r.top + r.height * 0.35 <= featherY + vh * 0.05 || r.top < vh * 0.22) { h.classList.add('is-in'); pendingHeadlines.delete(h); }
+  }
 
   // headline lines drift apart a little with depth as they cross the screen
   if (lineParallax) {
@@ -460,13 +468,7 @@ async function boot() {
 }
 
 let resizeT;
-let lastW = innerWidth, lastH = steadyHeight();
 addEventListener('resize', () => {
-  // the address bar sliding in and out changes only the live height; everything is
-  // laid out against the steady height, so there's nothing to redo
-  const h = steadyHeight();
-  if (innerWidth === lastW && h === lastH) return;
-  lastW = innerWidth; lastH = h;
   clearTimeout(resizeT);
   resizeT = setTimeout(() => { world?.resize(); measure(); }, 120);
 });

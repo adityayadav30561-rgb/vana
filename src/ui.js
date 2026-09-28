@@ -68,20 +68,3 @@ export function magnetic(el) {
     if (inner) inner.style.transform = '';
   });
 }
-
-/**
- * The window's height with a phone's address bar hidden. It stays the same while
- * the bar slides in and out as you scroll, so scroll-linked motion laid out
- * against it doesn't jump. On desktop it's simply the window's height.
- */
-let probe = null;
-export function steadyHeight() {
-  if (!probe) {
-    probe = document.createElement('div');
-    probe.setAttribute('aria-hidden', 'true');
-    // 100lvh where supported; browsers without it keep 100vh
-    probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none';
-    document.body.appendChild(probe);
-  }
-  return probe.offsetHeight || innerHeight;
-}
