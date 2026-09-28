@@ -16,6 +16,8 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 document.documentElement.classList.add('js');
+// Android: no frosted-glass blurs (see .lite in style.css)
+if (/Android/i.test(navigator.userAgent)) document.documentElement.classList.add('lite');
 
 // ---------------------------------------------------------- reveals -----
 

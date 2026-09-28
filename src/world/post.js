@@ -92,7 +92,9 @@ export function createPost(renderer, { quality = 'high' } = {}) {
   const hi = quality === 'high';
   const low = quality === 'low';
   const gl2 = renderer.capabilities.isWebGL2;
-  const floatType = gl2 ? THREE.HalfFloatType : THREE.UnsignedByteType;
+  // ordinary 8-bit targets on the low tier: half-float render targets are where
+  // some mobile GPU drivers (Samsung's Xclipse among them) fall over
+  const floatType = gl2 && !low ? THREE.HalfFloatType : THREE.UnsignedByteType;
   const target = (o = {}) => new THREE.WebGLRenderTarget(1, 1, { type: floatType, depthBuffer: false, ...o });
 
   const rtScene = new THREE.WebGLRenderTarget(1, 1, { type: floatType, samples: gl2 && !low ? 4 : 0 });

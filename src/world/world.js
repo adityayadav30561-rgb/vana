@@ -380,14 +380,22 @@ function loadImage(url) {
 
 // ----------------------------------------------------------------- world ---
 
-export async function createWorld(canvas, { quality = 'high', imageUrl, featherUrl, onProgress = () => {} } = {}) {
+export async function createWorld(canvas, { quality = 'high', imageUrl, featherUrl, onProgress = () => {}, onLost = () => {} } = {}) {
   const hi = quality === 'high';
   const mid = quality === 'medium';
   const Q = hi ? 1 : mid ? 0.7 : 0.45;
+  // phones get the same forest painted at a smaller size (a quarter of the memory
+  // on the low tier), so the GPU is never asked for more than it can hold
+  const lean = !hi && !mid;
+  const TS = hi ? 1 : mid ? 0.8 : 0.5;
+  const px = (n) => Math.max(32, Math.round(n * TS));
 
   // antialiasing happens in the post pipeline's multisampled scene target
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1.5));
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: lean ? 'default' : 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hi ? 1.75 : mid ? 1.5 : 1.25));
+  // if the GPU gives up (a driver reset, memory pressure), say so, so the page can
+  // fall back to the still forest instead of freezing on a dead canvas
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost(); }, { once: true });
   const post = createPost(renderer, { quality });
   renderer.setClearColor(0xb9c78f, 1);
   const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -420,18 +428,18 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
   const T = {};
   const yieldFrame = () => new Promise((r) => setTimeout(r, 0));
   const jobs = [
-    ['sky', () => P.paintSky(512, 2048)],
-    ['distant', () => P.paintDistant(5, 2048, 512)],
-    ['tree0', () => P.paintTree(101, 768, 1024, { clump: 0.1, spread: 2.0, trunk: 0.07, trunkLen: 0.42 })],
-    ['tree1', () => P.paintTree(202, 512, 1024, { split: 2, trunk: 0.1, spread: 1.2, trunkLen: 0.46, clump: 0.12 })],
-    ['tree2', () => P.paintTree(303, 640, 1024, { trunk: 0.075, clump: 0.1, trunkLen: 0.5, ratio: 0.62, spread: 1.6 })],
-    ['treeBig', () => P.paintTree(404, 1024, 2048, { trunk: 0.12, clump: 0.12, trunkLen: 0.44, density: 1.1 })],
-    ['clump0', () => P.paintClump(11, 512)],
-    ['clump1', () => P.paintClump(12, 512, { palette: P.LEAF_BACK, shade: 0.15 })],
-    ['clump2', () => P.paintClump(13, 512, { shade: -0.1 })],
-    ['branch0', () => P.paintBranch(21, 1024, 512)],
-    ['branch1', () => P.paintBranch(22, 1024, 512, { y: 0.5, angle: -0.05 })],
-    ['ground', () => P.paintGround(41, 1024)],
+    ['sky', () => P.paintSky(px(512), px(2048))],
+    ['distant', () => P.paintDistant(5, px(2048), px(512))],
+    ['tree0', () => P.paintTree(101, px(768), px(1024), { clump: 0.1, spread: 2.0, trunk: 0.07, trunkLen: 0.42 })],
+    ['tree1', () => P.paintTree(202, px(512), px(1024), { split: 2, trunk: 0.1, spread: 1.2, trunkLen: 0.46, clump: 0.12 })],
+    ['tree2', () => P.paintTree(303, px(640), px(1024), { trunk: 0.075, clump: 0.1, trunkLen: 0.5, ratio: 0.62, spread: 1.6 })],
+    ['treeBig', () => P.paintTree(404, px(1024), px(2048), { trunk: 0.12, clump: 0.12, trunkLen: 0.44, density: 1.1 })],
+    ['clump0', () => P.paintClump(11, px(512))],
+    ['clump1', () => P.paintClump(12, px(512), { palette: P.LEAF_BACK, shade: 0.15 })],
+    ['clump2', () => P.paintClump(13, px(512), { shade: -0.1 })],
+    ['branch0', () => P.paintBranch(21, px(1024), px(512))],
+    ['branch1', () => P.paintBranch(22, px(1024), px(512), { y: 0.5, angle: -0.05 })],
+    ['ground', () => P.paintGround(41, px(1024))],
     ['ray', () => P.paintRay()],
     ['leaves', () => P.paintLeafAtlas()],
     ['bird', () => P.paintBird()],
@@ -440,12 +448,12 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
   // with transparent stand-ins (of the right proportions) until then
   const later = [
     ['shadow', [256, 128], () => P.paintShadow()],
-    ['grass0', [512, 256], () => P.paintGrass(31, 512, 256)],
-    ['grass1', [512, 256], () => P.paintGrass(32, 512, 256, { light: 0.25, flowers: 8 })],
+    ['grass0', [512, 256], () => P.paintGrass(31, px(512), px(256))],
+    ['grass1', [512, 256], () => P.paintGrass(32, px(512), px(256), { light: 0.25, flowers: 8 })],
     ['grassB', [512, 256], () => P.blurred(T.grass1, 3)],
     ...Object.entries(P.BUTTERFLIES).map(([k, s]) => ['bf_' + k, [128, 96], () => P.paintButterfly(s)]),
     ['moon', [256, 256], () => P.paintMoon()],
-    ['ancient', [1024, 1536], () => P.paintTree(505, 1024, 1536, {
+    ['ancient', [1024, 1536], () => P.paintTree(505, px(1024), px(1536), {
       trunk: 0.15, trunkLen: 0.55, split: 3, spread: 1.9, flare: 2.2, clump: 0.1, minLeafDepth: 2, density: 1.1,
       barkDetail: P.paintBarkDetail(), barkScale: 1, barkDetailAmt: 1,
     })],
@@ -462,7 +470,7 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
   T.clumpB1 = P.blurred(T.clump1, 5);
   T.branchB0 = P.blurred(T.branch0, 3);
   T.branchB1 = P.blurred(T.branch1, 3);
-  const featherArt = prepareFeatherArt(await featherPromise, hi ? 1536 : 1024);
+  const featherArt = prepareFeatherArt(await featherPromise, hi ? 1536 : mid ? 1024 : 768);
   T.feather = featherArt.canvas;
   onProgress(1);
 
@@ -477,6 +485,15 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
   const TX = {};
   for (const [k, c] of Object.entries(T)) TX[k] = toTexture(c);
   TX.ground.wrapS = TX.ground.wrapT = THREE.RepeatWrapping;
+
+  // on phones, once a texture is on the GPU its painted canvas is emptied, so the
+  // forest isn't held twice (Android keeps large 2D canvases in GPU memory too)
+  function release(t) {
+    if (!lean || !(t.image instanceof HTMLCanvasElement) || t.image.width <= 2) return;
+    renderer.initTexture(t);
+    t.image.width = t.image.height = 1;
+  }
+  for (const [k, t] of Object.entries(TX)) if (k !== 'feather') release(t);
 
   // stand-ins for textures that are still to come; materials using them are
   // remembered and re-pointed once the real texture is ready
@@ -1358,8 +1375,10 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
       const c = paint();
       if (name === 'grass1') T.grass1 = c;
       arrive(name, c);
+      if (name !== 'grass1') release(TX[name]); // the blurred grass still needs it
       await new Promise((r) => (window.requestIdleCallback ? requestIdleCallback(r, { timeout: 120 }) : setTimeout(r, 16)));
     }
+    release(TX.grass1);
     arrive('krishna', await imagePromise);
   })();
 

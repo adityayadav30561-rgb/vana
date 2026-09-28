@@ -123,5 +123,19 @@ The camera path lives in `LAYOUTS` in `src/world/world.js`, as keyframes over ov
 ## Quality tiers
 
 Device width and hardware select `high`, `medium` or `low`. The lower tiers scale the tree, particle
-and light-ray counts down. If WebGL is unavailable, a painted CSS backdrop and the static artwork are
-shown instead. With reduced motion, scroll smoothing, pointer parallax and idle motion are all toned down.
+and light-ray counts down. Every Android device gets `low`, whatever its screen size, because Android
+GPUs vary widely and some take the browser down under load. `low` also:
+
+- paints every texture at half size, then empties each painted canvas once it's on the GPU;
+- renders at no more than 1.25× the screen's pixel density;
+- uses ordinary 8-bit render targets instead of half-float ones, and no multisampling;
+- turns off frosted-glass (`backdrop-filter`) blurs through the `lite` class.
+
+If WebGL is unavailable, the page sits over a still of the forest (`assets/backdrop-morning.webp`) with
+the static artwork. With reduced motion, scroll smoothing, pointer parallax and idle motion are all toned down.
+
+**Crash guard.** Before the 3D forest starts, the page leaves a mark in `localStorage` (`vana:forest`).
+The mark is cleared when the forest has run for 8 seconds, or when the page is left or put in the
+background. A crash does neither, so on the next visit the mark is still there. That device then gets the
+still forest for 14 days. If the GPU drops the WebGL context mid-visit, the page switches to the still
+forest immediately. Add `?forest=on` to the address to try the 3D forest again sooner.

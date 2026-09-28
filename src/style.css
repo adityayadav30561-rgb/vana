@@ -94,13 +94,25 @@ ol, ul { padding: 0; list-style: none; }
 }
 .world-fallback { display: none; }
 body.no-webgl .world { display: none; }
+/* without the 3D forest (no WebGL, or a device that couldn't run it) the page
+   sits over a still of the same forest */
 body.no-webgl .world-fallback {
   display: block;
   position: fixed; inset: 0; z-index: 0;
   background:
-    radial-gradient(60% 40% at 28% 12%, rgba(255, 240, 200, 0.7), transparent 70%),
-    linear-gradient(180deg, #a9cad8 0%, #e9e2b8 22%, #9db26e 48%, #3e5a27 72%, #1d3014 100%);
+    linear-gradient(180deg, rgba(10, 24, 16, 0.12), rgba(10, 24, 16, 0.5) 70%, rgba(8, 19, 12, 0.72)),
+    url('../assets/backdrop-morning.webp') center / cover no-repeat,
+    #3e5a27;
 }
+
+/* devices on the lean forest (Android) skip frosted-glass blurs: each one makes
+   the GPU re-blur the moving canvas behind it on every frame. Surfaces get a
+   little more body instead. */
+.lite *, .lite *::before, .lite *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.lite .glass, .lite .card, .lite .tabs, .lite .showcase__btn, .lite .filter, .lite .lightbox__close, .lite .lightbox__nav { background-color: rgba(16, 38, 26, 0.7); }
+.lite .nav::before { background: rgba(18, 38, 27, 0.82); }
+.lite .lightbox::backdrop { background: rgba(6, 16, 10, 0.9); }
+.lite .forest-bg__near img, .lite .forest-bg__far img { filter: none; }
 
 .atmos {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;

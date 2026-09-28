@@ -385,17 +385,59 @@ function finishLoading() {
   music.begin();
 }
 
+const android = /Android/i.test(navigator.userAgent);
+if (android) document.documentElement.classList.add('lite');
+
 function pickQuality() {
   const mem = navigator.deviceMemory || 4;
   const cores = navigator.hardwareConcurrency || 4;
-  if (vw < 720 || mem <= 2) return 'low';
+  // Android GPUs vary wildly (some crash the browser under load), so every
+  // Android device gets the lean forest, whatever its screen size
+  if (vw < 720 || mem <= 2 || android) return 'low';
   if (vw < 1100 || cores <= 4) return 'medium';
   return 'high';
+}
+
+// ------------------------------------------------------- crash guard ----
+// If the 3D forest ever takes the browser down on a device, the next visit
+// remembers and shows the still forest instead of crashing again. A visit that
+// ends normally (the page is closed or left) clears the mark; only a crash
+// leaves it behind. ?forest=on in the address tries the 3D forest again.
+
+const GL_KEY = 'vana:forest';
+const GL_REST = 14 * 24 * 3600 * 1000; // how long a device rests on the still forest
+const glRead = () => { try { return JSON.parse(localStorage.getItem(GL_KEY) || 'null'); } catch { return null; } };
+const glWrite = (v) => { try { v ? localStorage.setItem(GL_KEY, JSON.stringify(v)) : localStorage.removeItem(GL_KEY); } catch { /* storage unavailable */ } };
+
+function forestAllowed() {
+  if (new URLSearchParams(location.search).get('forest') === 'on') { glWrite(null); return true; }
+  const mark = glRead();
+  if (mark?.state === 'off' && Date.now() < mark.until) return false;
+  // the last visit started the forest and never finished: it crashed
+  if (mark?.state === 'starting') { glWrite({ state: 'off', until: Date.now() + GL_REST }); return false; }
+  return true;
+}
+
+function stillForest() {
+  world = null;
+  document.body.classList.remove('has-post');
+  document.body.classList.add('no-webgl');
 }
 
 async function boot() {
   measure();
   requestAnimationFrame(frame);
+  if (!forestAllowed()) {
+    stillForest();
+    setTimeout(finishLoading, reduced ? 0 : 350);
+    return;
+  }
+  glWrite({ state: 'starting', at: Date.now() });
+  // leaving the page, or putting it in the background, means it didn't crash
+  // (a crash freezes the page before either can run)
+  const cleared = () => { if (glRead()?.state === 'starting') glWrite(null); };
+  addEventListener('pagehide', cleared);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) cleared(); });
   try {
     // three.js and the painter load as their own chunk, after the page is up
     const { createWorld } = await import('./world/world.js');
@@ -407,12 +449,20 @@ async function boot() {
         intro.style.setProperty('--p', f.toFixed(3));
         loader.style.setProperty('--p', f.toFixed(3));
       },
+      // the GPU gave up mid-visit: carry on with the still forest, and rest this device
+      onLost: () => {
+        glWrite({ state: 'off', until: Date.now() + GL_REST });
+        stillForest();
+      },
     });
+    // the forest has been running for a while without trouble: clear the mark
+    setTimeout(() => { if (world && glRead()?.state === 'starting') glWrite(null); }, 8000);
     // the film pass draws its own vignette and grain
     document.body.classList.add('has-post');
   } catch (err) {
     console.warn('WebGL forest unavailable, using the static fallback.', err);
-    document.body.classList.add('no-webgl');
+    glWrite(null);
+    stillForest();
   }
   setTimeout(finishLoading, reduced ? 0 : 350);
 }
