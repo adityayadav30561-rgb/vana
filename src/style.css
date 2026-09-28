@@ -1046,10 +1046,14 @@ span.prints { cursor: inherit; }
 .final__ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
 .fa-land { left: 43%; top: 87%; }
 .final__fallback { display: none; }
+/* the still-forest fallback: Krishna is already a clean cut-out, so he stands as he
+   is, grounded by a soft shadow, rather than faded through a mask */
 body.no-webgl .final__fallback {
-  display: block; position: absolute; right: 8%; bottom: 0; height: 88%; width: auto; z-index: -1;
-  -webkit-mask-image: radial-gradient(80% 70% at 50% 60%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(80% 70% at 50% 60%, #000 55%, transparent 100%);
+  display: block; position: absolute; right: 8%; bottom: 0; height: 80%; width: auto; z-index: -1;
+  filter: drop-shadow(0 24px 30px rgba(6, 16, 10, 0.45));
+}
+@media (max-width: 720px) {
+  body.no-webgl .final__fallback { right: 50%; height: 52%; transform: translateX(50%); }
 }
 .footer {
   position: relative;

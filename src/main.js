@@ -404,8 +404,11 @@ function pickQuality() {
 // ends normally (the page is closed or left) clears the mark; only a crash
 // leaves it behind. ?forest=on in the address tries the 3D forest again.
 
-const GL_KEY = 'vana:forest';
-const GL_REST = 14 * 24 * 3600 * 1000; // how long a device rests on the still forest
+// (renamed from 'vana:forest', which also recorded ordinary GPU hand-backs as
+// crashes; phones marked by it get the 3D forest back)
+const GL_KEY = 'vana:forest-v2';
+const GL_REST = 3 * 24 * 3600 * 1000; // how long a device that crashed rests on the still forest
+try { localStorage.removeItem('vana:forest'); } catch { /* storage unavailable */ }
 const glRead = () => { try { return JSON.parse(localStorage.getItem(GL_KEY) || 'null'); } catch { return null; } };
 const glWrite = (v) => { try { v ? localStorage.setItem(GL_KEY, JSON.stringify(v)) : localStorage.removeItem(GL_KEY); } catch { /* storage unavailable */ } };
 
@@ -416,6 +419,18 @@ function forestAllowed() {
   // the last visit started the forest and never finished: it crashed
   if (mark?.state === 'starting') { glWrite({ state: 'off', until: Date.now() + GL_REST }); return false; }
   return true;
+}
+
+let glLost = false, lostTimer = 0;
+function awaitRestore() {
+  const wait = () => { clearTimeout(lostTimer); lostTimer = setTimeout(() => { if (glLost) stillForest(); }, 4000); };
+  if (!document.hidden) { wait(); return; }
+  const onVisible = () => {
+    if (document.hidden) return;
+    document.removeEventListener('visibilitychange', onVisible);
+    if (glLost) wait();
+  };
+  document.addEventListener('visibilitychange', onVisible);
 }
 
 function stillForest() {
@@ -449,11 +464,12 @@ async function boot() {
         intro.style.setProperty('--p', f.toFixed(3));
         loader.style.setProperty('--p', f.toFixed(3));
       },
-      // the GPU gave up mid-visit: carry on with the still forest, and rest this device
-      onLost: () => {
-        glWrite({ state: 'off', until: Date.now() + GL_REST });
-        stillForest();
-      },
+      // Android takes the GPU away when the tab is backgrounded or the screen locks,
+      // and gives it back on return. That's not a crash: wait for it. Only if it
+      // hasn't come back a few seconds after the page is visible again does the
+      // visit carry on over the still forest (without marking the device).
+      onLost: () => { glLost = true; awaitRestore(); },
+      onRestored: () => { glLost = false; clearTimeout(lostTimer); },
     });
     // the forest has been running for a while without trouble: clear the mark
     setTimeout(() => { if (world && glRead()?.state === 'starting') glWrite(null); }, 8000);

@@ -126,7 +126,7 @@ Device width and hardware select `high`, `medium` or `low`. The lower tiers scal
 and light-ray counts down. Every Android device gets `low`, whatever its screen size, because Android
 GPUs vary widely and some take the browser down under load. `low` also:
 
-- paints every texture at half size, then empties each painted canvas once it's on the GPU;
+- paints every texture at half size (the painted canvases are kept, so a lost GPU context can be rebuilt);
 - renders at no more than 1.25× the screen's pixel density;
 - uses ordinary 8-bit render targets instead of half-float ones, and no multisampling;
 - turns off frosted-glass (`backdrop-filter`) blurs through the `lite` class.
@@ -134,8 +134,12 @@ GPUs vary widely and some take the browser down under load. `low` also:
 If WebGL is unavailable, the page sits over a still of the forest (`assets/backdrop-morning.webp`) with
 the static artwork. With reduced motion, scroll smoothing, pointer parallax and idle motion are all toned down.
 
-**Crash guard.** Before the 3D forest starts, the page leaves a mark in `localStorage` (`vana:forest`).
+**Crash guard.** Before the 3D forest starts, the page leaves a mark in `localStorage` (`vana:forest-v2`).
 The mark is cleared when the forest has run for 8 seconds, or when the page is left or put in the
 background. A crash does neither, so on the next visit the mark is still there. That device then gets the
-still forest for 14 days. If the GPU drops the WebGL context mid-visit, the page switches to the still
-forest immediately. Add `?forest=on` to the address to try the 3D forest again sooner.
+still forest for 3 days. Add `?forest=on` to the address to try the 3D forest again sooner.
+
+**Lost GPU context.** Android often takes the GPU away from a tab that's backgrounded or whose screen is
+locked, and gives it back on return. That isn't treated as a crash: the page waits, and three.js rebuilds
+the scene when the context is restored. Only if it hasn't come back 4 seconds after the page is visible
+again does that visit carry on over the still forest, and the device isn't marked.

@@ -380,7 +380,7 @@ function loadImage(url) {
 
 // ----------------------------------------------------------------- world ---
 
-export async function createWorld(canvas, { quality = 'high', imageUrl, featherUrl, onProgress = () => {}, onLost = () => {} } = {}) {
+export async function createWorld(canvas, { quality = 'high', imageUrl, featherUrl, onProgress = () => {}, onLost = () => {}, onRestored = () => {} } = {}) {
   const hi = quality === 'high';
   const mid = quality === 'medium';
   const Q = hi ? 1 : mid ? 0.7 : 0.45;
@@ -393,9 +393,11 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
   // antialiasing happens in the post pipeline's multisampled scene target
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: lean ? 'default' : 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hi ? 1.75 : mid ? 1.5 : 1.25));
-  // if the GPU gives up (a driver reset, memory pressure), say so, so the page can
-  // fall back to the still forest instead of freezing on a dead canvas
-  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost(); }, { once: true });
+  // Android often takes the GPU away when the tab is backgrounded or the screen
+  // locks, and hands it back on return. preventDefault asks for it back; three.js
+  // then rebuilds everything from the painted canvases, which is why they're kept.
+  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); onLost(); });
+  canvas.addEventListener('webglcontextrestored', () => onRestored());
   const post = createPost(renderer, { quality });
   renderer.setClearColor(0xb9c78f, 1);
   const aniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -485,15 +487,6 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
   const TX = {};
   for (const [k, c] of Object.entries(T)) TX[k] = toTexture(c);
   TX.ground.wrapS = TX.ground.wrapT = THREE.RepeatWrapping;
-
-  // on phones, once a texture is on the GPU its painted canvas is emptied, so the
-  // forest isn't held twice (Android keeps large 2D canvases in GPU memory too)
-  function release(t) {
-    if (!lean || !(t.image instanceof HTMLCanvasElement) || t.image.width <= 2) return;
-    renderer.initTexture(t);
-    t.image.width = t.image.height = 1;
-  }
-  for (const [k, t] of Object.entries(TX)) if (k !== 'feather') release(t);
 
   // stand-ins for textures that are still to come; materials using them are
   // remembered and re-pointed once the real texture is ready
@@ -1375,10 +1368,8 @@ export async function createWorld(canvas, { quality = 'high', imageUrl, featherU
       const c = paint();
       if (name === 'grass1') T.grass1 = c;
       arrive(name, c);
-      if (name !== 'grass1') release(TX[name]); // the blurred grass still needs it
       await new Promise((r) => (window.requestIdleCallback ? requestIdleCallback(r, { timeout: 120 }) : setTimeout(r, 16)));
     }
-    release(TX.grass1);
     arrive('krishna', await imagePromise);
   })();
 
