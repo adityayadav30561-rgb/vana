@@ -48,9 +48,11 @@ function workContent() {
       order: 'pre',
       async handler(html) {
         if (!html.includes('<!-- @work-showcase -->')) return html;
-        const { CATEGORIES, PROJECTS } = await load('projects.js');
-        const { renderShowcase } = await load('render-work.js');
-        return html.replace('<!-- @work-showcase -->', renderShowcase(CATEGORIES, PROJECTS));
+        const { SITE, CATEGORIES, PROJECTS } = await load('projects.js');
+        const { renderShowcase, renderSocial } = await load('render-work.js');
+        return html
+          .replace('<!-- @work-showcase -->', renderShowcase(CATEGORIES, PROJECTS))
+          .replace('<!-- @social -->', renderSocial(SITE));
       },
     },
     // editing the project data or templates rewrites the pages and reloads the browser

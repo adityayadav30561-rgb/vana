@@ -848,6 +848,7 @@ span.prints { cursor: inherit; }
 .case__site svg { width: 16px; height: 16px; transition: transform 0.4s var(--ease); }
 .case__site:hover { color: var(--cream); border-color: rgba(244, 236, 217, 0.4); }
 .case__site:hover svg { transform: translate(2px, -2px); }
+.case__site[hidden] { display: none; }
 
 
 /* the dashboards, up close: a print held up over the blurred forest */

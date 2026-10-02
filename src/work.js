@@ -59,8 +59,13 @@ export function initWork({ reduced = false } = {}) {
     // the name is carried on the project itself: layouts differ in how they show it
     $('#lbTitle').textContent = article.dataset.name || $('h3', article)?.textContent || '';
     $('#lbMeta').textContent = $('.project__meta', article)?.textContent || '';
-    site.href = article.dataset.site;
-    $('span', site).textContent = new URL(article.dataset.site).hostname.replace(/^www\./, '');
+    // a project without a live site has no link to show
+    const url = article.dataset.site;
+    site.hidden = !url;
+    if (url) {
+      site.href = url;
+      $('span', site).textContent = new URL(url).hostname.replace(/^www\./, '');
+    } else site.removeAttribute('href');
     thumbs.replaceChildren(...shots.map((s, k) => {
       const b = document.createElement('button');
       b.type = 'button';

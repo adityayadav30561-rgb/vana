@@ -131,6 +131,12 @@ function emptySlide(c) {
           </article>`;
 }
 
+export function renderSocial(site) {
+  const links = (site.social || []).filter((l) => l.url);
+  if (!links.length) return '';
+  return `<nav class="footer__social" aria-label="Social">${links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}</nav>`;
+}
+
 export function renderShowcase(categories, projects) {
   const groups = categories.map((c) => ({ ...c, items: projects.filter((p) => p.category === c.id) }));
   const shown = groups.filter((g) => g.items.length || g.empty);

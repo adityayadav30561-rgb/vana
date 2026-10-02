@@ -34,6 +34,12 @@ export const SITE = {
   name: 'Vana',
   url: '',
   email: 'hello@vana.studio',
+  // footer links; one without a url is left out until it has one
+  social: [
+    { label: 'Instagram', url: '' },
+    { label: 'LinkedIn', url: '' },
+    { label: 'Behance', url: '' },
+  ],
 };
 
 export const CATEGORIES = [

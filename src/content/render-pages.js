@@ -1,7 +1,7 @@
 // Renders the /work index and one page per project from projects.js.
 // Runs in Node (vite.config.js writes the results to work/), never in the browser.
 
-import { esc, pad, host, emph, ICONS, parseFigure, countingFigure, growthLine, print, prints } from './render-work.js';
+import { esc, pad, host, emph, ICONS, parseFigure, countingFigure, growthLine, print, prints, renderSocial } from './render-work.js';
 
 const FAVICON = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 31C15 20 13 10 16 2c3 8 1 18 0 29z' fill='%236f9a3a'/%3E%3Cellipse cx='16' cy='9' rx='5' ry='6.5' fill='%232aa38a'/%3E%3Cellipse cx='16' cy='9.4' rx='2.6' ry='3.6' fill='%23143f93'/%3E%3C/svg%3E`;
 const FONTS = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..600,0..100,0..1;1,9..144,300..600,0..100,0..1&family=Manrope:wght@400;500;600;700&display=swap';
@@ -142,7 +142,7 @@ ${current === 'project' ? '%%NEXT%%' : ''}${landing(root)}
       <span>© 2026 ${esc(site.name)} Studio</span>
       <a href="mailto:${esc(site.email)}">${esc(site.email)}</a>
       <span class="footer__place">Bengaluru · Working worldwide</span>
-      <nav class="footer__social" aria-label="Social"><a href="#" rel="noopener">Instagram</a><a href="#" rel="noopener">LinkedIn</a><a href="#" rel="noopener">Behance</a></nav>
+      ${renderSocial(site)}
     </footer>
 ${lightbox ? LIGHTBOX : ''}
     <script type="module" src="${root}src/pages.js"></script>
@@ -159,7 +159,7 @@ const LIGHTBOX = `
             <p class="project__meta" id="lbMeta"></p>
             <h3 class="lightbox__title" id="lbTitle"></h3>
           </div>
-          <a class="case__site" id="lbSite" href="#" target="_blank" rel="noopener"><span></span><svg aria-hidden="true"><use href="#arrow-out" /></svg></a>
+          <a class="case__site" id="lbSite" target="_blank" rel="noopener" hidden><span></span><svg aria-hidden="true"><use href="#arrow-out" /></svg></a>
           <button class="lightbox__close" id="lbClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg></button>
         </header>
         <div class="lightbox__stage">

@@ -14,6 +14,14 @@ npm run build     # production build → dist/
 npm run preview   # serve the build
 ```
 
+## Deploy
+
+`vercel.json` tells Vercel to run the Vite build and publish `dist/`. The site must be served from the
+build: the raw source can't load three.js or the work pages, so it would show only the still forest.
+It also adds a trailing slash to page addresses (`/work` → `/work/`), which the pages' relative links need.
+
+Footer social links come from `SITE.social` in `src/content/projects.js`. A link without a `url` is left out.
+
 ## How it fits together
 
 | File | Role |
