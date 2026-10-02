@@ -134,10 +134,12 @@ GPUs vary widely and some take the browser down under load. `low` also:
 If WebGL is unavailable, the page sits over a still of the forest (`assets/backdrop-morning.webp`) with
 the static artwork. With reduced motion, scroll smoothing, pointer parallax and idle motion are all toned down.
 
-**Crash guard.** Before the 3D forest starts, the page leaves a mark in `localStorage` (`vana:forest-v2`).
+**Crash guard.** Before the 3D forest starts, the page leaves a mark in `localStorage` (`vana:forest-v3`).
 The mark is cleared when the forest has run for 8 seconds, or when the page is left or put in the
-background. A crash does neither, so on the next visit the mark is still there. That device then gets the
-still forest for 3 days. Add `?forest=on` to the address to try the 3D forest again sooner.
+background. A crash does neither, so on the next visit the mark is still there. A visit can also end that
+way without a crash (the browser swiped away, the tab discarded by the phone), so one unclean ending is
+forgiven. Only after two in a row does the device get the still forest, for a day. Add `?forest=on` to the
+address to try the 3D forest again sooner.
 
 **Lost GPU context.** Android often takes the GPU away from a tab that's backgrounded or whose screen is
 locked, and gives it back on return. That isn't treated as a crash: the page waits, and three.js rebuilds

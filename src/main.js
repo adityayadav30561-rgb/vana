@@ -399,25 +399,38 @@ function pickQuality() {
 }
 
 // ------------------------------------------------------- crash guard ----
-// If the 3D forest ever takes the browser down on a device, the next visit
-// remembers and shows the still forest instead of crashing again. A visit that
-// ends normally (the page is closed or left) clears the mark; only a crash
-// leaves it behind. ?forest=on in the address tries the 3D forest again.
+// If the 3D forest ever takes the browser down on a device, later visits
+// remember and show the still forest instead of crashing again. A visit that
+// ends normally (the page is closed, left or backgrounded) clears the mark;
+// only a crash leaves it behind. ?forest=on in the address tries the 3D forest again.
+//
+// A visit can also end without a word when the browser is swiped away or the
+// phone discards the tab, which looks just like a crash. So one unclean ending
+// is forgiven: only two in a row rest the device, and only for a day.
 
-// (renamed from 'vana:forest', which also recorded ordinary GPU hand-backs as
-// crashes; phones marked by it get the 3D forest back)
-const GL_KEY = 'vana:forest-v2';
-const GL_REST = 3 * 24 * 3600 * 1000; // how long a device that crashed rests on the still forest
-try { localStorage.removeItem('vana:forest'); } catch { /* storage unavailable */ }
+// (renamed from 'vana:forest-v2', which rested a device after a single unclean
+// ending; devices marked by it get the 3D forest back)
+const GL_KEY = 'vana:forest-v3';
+const GL_STRIKES = 2; // unclean endings in a row before a device rests
+const GL_REST = 24 * 3600 * 1000; // how long a device that crashed rests on the still forest
+try { ['vana:forest', 'vana:forest-v2'].forEach((k) => localStorage.removeItem(k)); } catch { /* storage unavailable */ }
 const glRead = () => { try { return JSON.parse(localStorage.getItem(GL_KEY) || 'null'); } catch { return null; } };
 const glWrite = (v) => { try { v ? localStorage.setItem(GL_KEY, JSON.stringify(v)) : localStorage.removeItem(GL_KEY); } catch { /* storage unavailable */ } };
 
+let glStrikes = 0; // unclean endings before this visit
 function forestAllowed() {
   if (new URLSearchParams(location.search).get('forest') === 'on') { glWrite(null); return true; }
   const mark = glRead();
-  if (mark?.state === 'off' && Date.now() < mark.until) return false;
-  // the last visit started the forest and never finished: it crashed
-  if (mark?.state === 'starting') { glWrite({ state: 'off', until: Date.now() + GL_REST }); return false; }
+  if (mark?.state === 'off') {
+    if (Date.now() < mark.until) return false;
+    glWrite(null); // rested long enough: try again with a clean slate
+    return true;
+  }
+  // the last visit started the forest and never finished
+  if (mark?.state === 'starting') {
+    glStrikes = (mark.strikes || 0) + 1;
+    if (glStrikes >= GL_STRIKES) { glWrite({ state: 'off', until: Date.now() + GL_REST }); return false; }
+  }
   return true;
 }
 
@@ -447,7 +460,7 @@ async function boot() {
     setTimeout(finishLoading, reduced ? 0 : 350);
     return;
   }
-  glWrite({ state: 'starting', at: Date.now() });
+  glWrite({ state: 'starting', at: Date.now(), strikes: glStrikes });
   // leaving the page, or putting it in the background, means it didn't crash
   // (a crash freezes the page before either can run)
   const cleared = () => { if (glRead()?.state === 'starting') glWrite(null); };
